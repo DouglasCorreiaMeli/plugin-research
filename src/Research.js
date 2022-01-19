@@ -1,14 +1,14 @@
 var platform = {
-    site_id: 'MLA',   //wc_mercadopago_params.site_id,
-    public_key: '123', //wc_mercadopago_params.public_key
-    platform_id: "BO2HNR2IC4P001KBGPT0",
-    platform_version: "1.0",
-    plugin_version: "1.0",
-    endpoint: 'http://localhost:8080/insigths',
-    cust_id: 123
+    site_id: wc_mercadopago_params.site_id,
+    platform_id: wc_mercadopago_params.platform_id,
+    platform_version: wc_mercadopago_params.platform_version,
+    plugin_version: wc_mercadopago_params.plugin_version,
+    endpoint: 'https://homol_mpmodules-caronte.furyapps.io/insights',
+    cust_id: 1
 };
 
-const Research = () => {
+const Research = (client_id) => {
+    platform.cust_id = client_id;
     const data = JSON.parse(sessionStorage.getItem('plugin-research'));
     if (data) {
         const Research = document.createElement('div');
@@ -86,28 +86,30 @@ function createReason(data) {
         switch (reason.reason_en) {
             case 'very easy':
                 helperDiv.className = 'mp-research-good';
-                img.setAttribute('src', 'very_easy.svg');
+                img.setAttribute('src', 'https://hml-caronte-fe.s3.amazonaws.com/very_easy.svg');
                 break;
             case 'easy':
                 helperDiv.className = 'mp-research-good';
-                img.setAttribute('src', 'easy.svg');
+                img.setAttribute('src', 'https://hml-caronte-fe.s3.amazonaws.com/easy.svg');
                 break;
             case 'neutral':
                 helperDiv.className = 'mp-research-neutral';
-                img.setAttribute('src', 'neutral.svg');
+                img.setAttribute('src', 'https://hml-caronte-fe.s3.amazonaws.com/neutral.svg');
                 break;
             case 'hard':
                 helperDiv.className = 'mp-research-bad';
-                img.setAttribute('src', 'hard.svg');
+                img.setAttribute('src', 'https://hml-caronte-fe.s3.amazonaws.com/hard.svg');
                 break;
             case 'very hard':
                 helperDiv.className = 'mp-research-bad';
-                img.setAttribute('src', 'very_hard.svg');
+                img.setAttribute('src', 'https://hml-caronte-fe.s3.amazonaws.com/very_hard.svg');
                 break;
             default:
+                img = null;
+                helperDiv.className = 'mp-default';
                 break;
         }
-        span.appendChild(img);
+        if (img) span.appendChild(img);
         label.appendChild(input);
         label.appendChild(span);
         helperDiv.appendChild(label);
@@ -151,13 +153,14 @@ function createQuestion(data) {
 
 
 function getPayload() {
-    let teste = JSON.parse(sessionStorage.getItem('plugin-research'));
+    let cust_id = platform.cust_id; 
+    let research = JSON.parse(sessionStorage.getItem('plugin-research'));
     let comments = document.getElementById('comments').value;
     let reason = document.querySelector('input[name="rate"]:checked').value;
-    let question_en = teste.question_en;
-    let question_es = teste.question_es;
-    let question_pt = teste.question_pt;
-    let research_code = teste.code;
+    let question_en = research.question_en;
+    let question_es = research.question_es;
+    let question_pt = research.question_pt;
+    let research_code = research.code;
     let type;
     if (reason.includes('easy')) {
         type = 'positive';
@@ -170,7 +173,7 @@ function getPayload() {
         platform_id: platform.platform_id,
         platform_version: platform.platform_version,
         plugin_version: platform.plugin_version,
-        cust_id: platform.cust_id,
+        cust_id: cust_id,
         question_en: question_en,
         question_pt: question_pt,
         question_es: question_es,
@@ -178,6 +181,7 @@ function getPayload() {
         type: type
     };
 }
+
 
 function replaceResearchForThanks() {
     let research = document.getElementById('plugin-research');
@@ -213,7 +217,7 @@ function replaceResearchForThanks() {
 function sendData() {
     let payload = getPayload();
     sendHttpsRequest('POST', platform.endpoint, payload).then(responseData => {
-        console.log(responseData);
+        return responseData;
     }).finally(() => {
         replaceResearchForThanks();
     });

@@ -8,6 +8,7 @@
   box-shadow: 0px 6px 16px rgb(0 0 0 / 10%);
   border-radius: 6px;
   margin: 32px 0px;
+  margin-top: 0px;
 }
 .mp-research-title {
   font-family: Proxima Nova;
@@ -161,6 +162,18 @@
 .mp-research-reasons .mp-research-bad span:hover {
   background: rgba(167, 24, 9, 0.05);
   border: 1.2px solid rgba(219, 33, 30, 0.45);
+}
+
+.mp-research-reasons .mp-default input:checked + span {
+  background: #009ee3;
+  border: 1.2px solid #0493d0;
+  color: white;
+}
+
+.mp-research-reasons .mp-default span:hover {
+  background: #009ee3;
+  border: 1.2px solid #0493d0;
+  color: white;
 }
 
 @media only screen and (max-width: 880px) {
